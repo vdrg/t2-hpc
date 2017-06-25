@@ -5,6 +5,7 @@
 #include <getopt.h>
 #include <time.h>
 
+#include "stack.h"
 #include "wsp.h"
 
 static int verbose_flag;
@@ -93,31 +94,26 @@ int main(int argc, char *argv[]) {
   }
 
   // Load the mask that will be applied.
-  Cities *cities = calloc(1, sizeof(Cities));
-  printf("%s\n", matrix_path);
+  Cities cities;// = calloc(1, sizeof(Cities));
   vlog("Loading matrix file in %s\n", matrix_path);
   load_cities(matrix_path, cities);
 
   print_cities(cities);
 
-  // Iterate 'niter' times.
-  vlog("Solving WSP with %d processes\n", nproc);
-  //double start = omp_get_wtime( );
-  /*for (int i = 0; i < niter; i++) {
+  Stack stack;
 
-  // Apply mask to image, the result will be in 'temp'.
-  apply_mask(threads, image, temp, mask);
+  int path[] = { 0 }; // Starting city
+  push(&stack, path, 1, 0);
 
-  // Copy temp in image for the next iteration.
-  cp_image(image, temp);
-  }*/
-  //double end = omp_get_wtime( );  
-  vlog("Time:\n");
-  // printf("%lf\n", end - start);
+  //int *path = calloc(cities->size, sizeof(int));
 
-  // Write the final image.
+  //for (int i = 0; i < cities->size; i++) path[i] = i;
+
+  //printf("Distance: %d\n", total_distance(cities, path));
 
   // Let it go, let it goooooo
+  //free(path);
   free_cities(cities);
+  free_stack(stack);
   return 0;
 }
