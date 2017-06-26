@@ -3,6 +3,7 @@
 #include <math.h>
 
 #include "cities.h"
+#include "utils.h"
 
 void init_cities(Cities *cities, int size) {
   cities->size = size;
@@ -37,29 +38,22 @@ int get_distance(Cities *cities, int c1, int c2) {
   int _c1 = c1 < c2 ? c1 : c2;
   int _c2 = c1 < c2 ? c2 : c1;
 
-  printf("Cities: %d, %d \n", _c1, _c2);
   return cities->distances[_c2 - _c1 - 1][_c1];
 }
 
-int total_distance(Cities *cities, int *path, int current_min) {
-  int total = 0;
-
-  for (int i = 0; i < cities->size - 1; i++) {
-    total += get_distance(cities, path[i], path[i + 1]);
-
-    // Stop if worse than current best
-    if (total >= current_min) break;
+void print_path_v(int *path, int size) {
+  for (int i = 0; i < size - 1; i++) {
+    vlog("%d ", path[i]);
   }
-
-  return total;
+  vlog("| Cost: %d\n", path[size - 1]);
 }
 
-void run() {
-  
-
+void print_path_o(int *path, int size) {
+  for (int i = 0; i < size - 1; i++) {
+    output("%d ", path[i]);
+  }
+  output("| Cost: %d\n", path[size - 1]);
 }
-
-
 
 void print_cities(Cities *cities) {
   for (int y = 0; y < cities->size - 1; y++) {

@@ -1,3 +1,3 @@
 #pragma once
 
-enum tag { READY_TAG, RESULT_TAG, WORK_TAG};
+enum tag { READY_TAG, RESULT_TAG, WORK_TAG, DONE_TAG };

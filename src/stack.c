@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <stdlib.h>
 
 #include "stack.h"
 
@@ -29,7 +30,8 @@ bool empty(Stack *stack) {
 }
 
 void free_stack(Stack *stack) {
-  
+  // Assume an empty stack
+  free(stack);
 
 }
 

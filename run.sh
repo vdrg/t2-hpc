@@ -1,1 +1,6 @@
-mpiexec -n $1 tsp
+
+NPROC=$1
+
+shift
+
+mpiexec -n "$NPROC" tsp $@
