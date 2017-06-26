@@ -24,20 +24,22 @@ void master(int num_cities, int nproc) {
 
   push(stack, start, 2);
 
-  unsigned int done_leafs = 0;
+  unsigned long long done_leafs = 0;
 
-  unsigned int total_leafs = 1;
+  unsigned long long total_leafs = 1;
 
   for (int i = num_cities - 1; i > 1; i--)
     total_leafs *= i;
 
-  vlog("Total leafs: %d\n", total_leafs);
+  vlog("Total leafs: %llu\n", total_leafs);
+  //printf("%lu\n", total_leafs);
 
   int *best = NULL; // NULL path
 
   double start_time = MPI_Wtime();
 
   while (done_leafs < total_leafs) {
+  //while (true) {
 
     while (!empty(stack) && waiting > 0) {
       /*Node *node = pop(stack);
@@ -51,6 +53,7 @@ void master(int num_cities, int nproc) {
         continue;
       }
       free(node);*/
+
       int worker = find_worker(is_working);
 
       is_working[worker - 1] = true;
@@ -61,7 +64,7 @@ void master(int num_cities, int nproc) {
     master_receive(stack, &best, &done_leafs, num_cities, is_working, &waiting);
   }
 
-  //printf("%d\n", total_leafs);
+  //printf("%llu\n", total_leafs);
   //printf("%d\n", done_leafs);
 
   // KILL WORKERS
@@ -94,7 +97,7 @@ void send_work(int worker, Node *node) {
   free(node);
 }
 
-bool master_receive(Stack *stack, int **best, unsigned int *done_leafs, int num_cities, bool *is_working, int *waiting) {
+bool master_receive(Stack *stack, int **best, unsigned long long *done_leafs, int num_cities, bool *is_working, int *waiting) {
   MPI_Status status;
   int available = 0;
   MPI_Iprobe(MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &available, &status);
@@ -125,7 +128,7 @@ bool master_receive(Stack *stack, int **best, unsigned int *done_leafs, int num_
       if (!sent) {
         *waiting += 1;
         is_working[status.MPI_SOURCE - 1] = false;
-      } */
+      }*/
 
       if (!empty(stack)) {
         send_work(status.MPI_SOURCE, pop(stack));
@@ -146,7 +149,7 @@ bool master_receive(Stack *stack, int **best, unsigned int *done_leafs, int num_
   return true;
 }
 
-void master_receive_result(MPI_Status *status, Stack *stack, unsigned int *done_leafs, int **best, int num_cities) {
+void master_receive_result(MPI_Status *status, Stack *stack, unsigned long long *done_leafs, int **best, int num_cities) {
   
   int size;
   MPI_Get_count(status, MPI_INT, &size);
@@ -159,7 +162,7 @@ void master_receive_result(MPI_Status *status, Stack *stack, unsigned int *done_
 
   if (size == num_cities + 1) { // The worker got to a leaf
     *done_leafs += 1; 
-    vlog("Leafs done: %d\n", *done_leafs);
+    vlog("Leafs done: %llu\n", *done_leafs);
 
     if (result[size - 1] < best_cost) {
       *best = result;
@@ -167,6 +170,7 @@ void master_receive_result(MPI_Status *status, Stack *stack, unsigned int *done_
     } else {
       free(result);
     }
+    //printf("%lu\n", *done_leafs);
   } else if (result[size - 1] < best_cost) {
     push(stack, result, size);
   } else { // PRUNNING (branch & bound)
@@ -177,7 +181,9 @@ void master_receive_result(MPI_Status *status, Stack *stack, unsigned int *done_
 
     vlog("Prunning %d leafs\n", leafs_prunned);
     *done_leafs += leafs_prunned;
-    vlog("Leafs done: %d\n", *done_leafs);
+    vlog("Leafs done: %llu\n", *done_leafs);
+
+    //printf("%lu\n", *done_leafs);
     free(result);
   }
 }

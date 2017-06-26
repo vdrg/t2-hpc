@@ -1,5 +1,5 @@
 CC = mpicc
-CFLAGS = -c -Wall -g -Os
+CFLAGS = -c -Wall -g -Os -std=c99
 LD = $(CC)
 LDFLAGS = -lm
 
