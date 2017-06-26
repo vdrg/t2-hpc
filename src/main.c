@@ -1,8 +1,8 @@
 #include <stdio.h>
+#include <time.h> 
 #include <stdlib.h>
 #include <math.h>
 #include <getopt.h>
-#include <time.h>
 
 #include "utils.h"
 #include "tsp.h"
